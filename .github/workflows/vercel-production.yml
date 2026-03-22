@@ -12,12 +12,12 @@ concurrency:
 
 env:
   NODE_VERSION: "24"
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  VERCEL_ORG_ID: team_zUA40JSygqoUd5ZPxAJog9Ck
+  VERCEL_PROJECT_ID: prj_OQQkwo1jKThJU6qwjFyK61N8r6q6
 
 jobs:
   deploy-production:
-    if: ${{ secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != '' }}
+    if: ${{ secrets.VERCEL_TOKEN != '' }}
     runs-on: ubuntu-latest
 
     steps:

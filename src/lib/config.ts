@@ -1,20 +1,38 @@
 import { z } from "zod";
 
-const serverConfigSchema = z.object({
-  OPENAI_API_KEY: z.string().trim().min(1).optional(),
-  OPENAI_MODEL: z.string().trim().min(1).default("gpt-5.4"),
-  OPENAI_FALLBACK_MODEL: z.string().trim().min(1).default("gpt-5-mini"),
-  OPENAI_VECTOR_STORE_ID: z.string().trim().min(1).optional(),
-  OPENAI_FILE_SEARCH_MAX_RESULTS: z.coerce.number().int().positive().default(6),
+const optionalNonEmptyString = z.preprocess((value) => {
+  if (typeof value !== "string") {
+    return value;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length === 0 ? undefined : trimmed;
+}, z.string().trim().min(1).optional());
+
+const sharedConfigSchema = z.object({
   APP_REGION_CODE: z.string().trim().min(1).default("cheonan-si"),
   APP_REGION_NAME: z.string().trim().min(1).default("천안시"),
   NEXT_PUBLIC_APP_NAME: z.string().trim().min(1).default("EcoGuide AI"),
   NEXT_PUBLIC_APP_REGION_LABEL: z.string().trim().min(1).default("천안시"),
 });
 
+const serverOnlyConfigSchema = z.object({
+  OPENAI_API_KEY: optionalNonEmptyString,
+  OPENAI_MODEL: z.string().trim().min(1).default("gpt-5.4"),
+  OPENAI_FALLBACK_MODEL: z.string().trim().min(1).default("gpt-5-mini"),
+  OPENAI_VECTOR_STORE_ID: optionalNonEmptyString,
+  OPENAI_FILE_SEARCH_MAX_RESULTS: z.coerce.number().int().positive().default(6),
+});
+
+const serverConfigSchema = sharedConfigSchema.extend(
+  serverOnlyConfigSchema.shape,
+);
+const publicConfigSchema = sharedConfigSchema;
+
 export type ServerConfig = z.infer<typeof serverConfigSchema>;
 
 let cachedConfig: ServerConfig | null = null;
+let cachedPublicConfig: z.infer<typeof publicConfigSchema> | null = null;
 
 export function getServerConfig(): ServerConfig {
   if (cachedConfig) {
@@ -26,11 +44,18 @@ export function getServerConfig(): ServerConfig {
 }
 
 export function getPublicAppConfig() {
-  const config = getServerConfig();
+  if (cachedPublicConfig) {
+    return {
+      appName: cachedPublicConfig.NEXT_PUBLIC_APP_NAME,
+      regionLabel: cachedPublicConfig.NEXT_PUBLIC_APP_REGION_LABEL,
+    };
+  }
+
+  cachedPublicConfig = publicConfigSchema.parse(process.env);
 
   return {
-    appName: config.NEXT_PUBLIC_APP_NAME,
-    regionLabel: config.NEXT_PUBLIC_APP_REGION_LABEL,
+    appName: cachedPublicConfig.NEXT_PUBLIC_APP_NAME,
+    regionLabel: cachedPublicConfig.NEXT_PUBLIC_APP_REGION_LABEL,
   };
 }
 

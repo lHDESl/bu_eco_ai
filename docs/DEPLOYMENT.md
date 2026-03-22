@@ -79,28 +79,26 @@ Official reference:
 
 ### Required GitHub Secrets
 
-Add these repository secrets in GitHub:
+Add this repository secret in GitHub:
 
 - `VERCEL_TOKEN`
-- `VERCEL_ORG_ID`
-- `VERCEL_PROJECT_ID`
 
-The workflows are intentionally guarded so they will be skipped until all three secrets exist.
+The workflows are intentionally guarded so they will be skipped until `VERCEL_TOKEN` exists.
 
-### How To Get `VERCEL_ORG_ID` And `VERCEL_PROJECT_ID`
+### Project Identifiers
 
-Vercel's documented method is:
+This repository is already linked to the Vercel project and the workflow files now include:
 
-1. Create or link a Vercel project with `vercel link`
-2. Read `.vercel/project.json`
-3. Copy:
-   - `orgId`
-   - `projectId`
-4. Store them as GitHub secrets
+- `VERCEL_ORG_ID=team_zUA40JSygqoUd5ZPxAJog9Ck`
+- `VERCEL_PROJECT_ID=prj_OQQkwo1jKThJU6qwjFyK61N8r6q6`
 
-### Current Blocker
+These identifiers are not treated as secrets here. Only the token remains secret.
 
-At the moment, local Vercel CLI authentication works, but Vercel project creation is still blocked by account permissions. That means the workflows are committed and ready, but GitHub secrets for `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` still need to be populated before deploy runs can succeed.
+### Current Status
+
+- The Vercel project `bu-eco-ai` has been created and linked.
+- Required runtime environment variables have been provisioned in Vercel for `development`, `preview`, and `production`.
+- GitHub Actions workflows are ready and only need the GitHub repository secret `VERCEL_TOKEN`.
 
 ## Ingestion Workflow
 
