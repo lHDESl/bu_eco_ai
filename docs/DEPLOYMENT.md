@@ -25,6 +25,8 @@ Official references:
 - https://vercel.com/docs/frameworks/nextjs
 - https://vercel.com/docs/environment-variables
 - https://nextjs.org/docs/app/getting-started/deploying
+- https://vercel.com/docs/vercel-firewall/vercel-waf/custom-rules
+- https://vercel.com/guides/geo-ip-headers-geolocation-vercel-functions
 
 ## Required Environment Variables
 
@@ -52,6 +54,49 @@ Set these in Vercel for both preview and production:
    - `/api/health`
    - `POST /api/chat` with real environment variables
 7. Promote to production after manual verification.
+
+## Korea-Only Access Policy
+
+All deployed environments are configured to deny traffic unless Vercel geolocation resolves the request country to `KR`.
+
+Implementation details:
+
+- The policy lives in the repository root `vercel.json`.
+- Requests are denied when `x-vercel-ip-country` is missing.
+- Requests are denied when `x-vercel-ip-country` is not `KR`.
+- Local `npm run dev` is unaffected because the rule is enforced by Vercel on deployed environments.
+
+Current rule shape:
+
+```json
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "routes": [
+    {
+      "src": "/(.*)",
+      "missing": [{ "type": "header", "key": "x-vercel-ip-country" }],
+      "mitigate": { "action": "deny" }
+    },
+    {
+      "src": "/(.*)",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": { "ninc": ["KR"] }
+        }
+      ],
+      "mitigate": { "action": "deny" }
+    }
+  ]
+}
+```
+
+Operational notes:
+
+- This is enforced at the Vercel edge rather than only inside Next.js application code.
+- If the project is moved to a different Vercel project, keep `vercel.json` committed so the policy re-applies on the next deployment.
+- If future preview sharing outside Korea is needed, adjust the rule deliberately and document the exception in the same change.
 
 ## GitHub Actions Validation
 

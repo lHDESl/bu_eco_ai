@@ -169,3 +169,4 @@ Notes:
 - Re-ingesting official sources should be done locally or in a controlled environment, then the resulting vector store ID can be reused in Vercel.
 - The Cheonan municipal source is stored as a local snapshot text file for reproducible ingestion when the public page is not reliably fetchable.
 - Deployments are handled by Vercel Git integration. GitHub Actions only run validation checks.
+- All deployed environments are restricted to South Korea traffic only through `vercel.json` WAF deny rules based on Vercel geolocation headers.
