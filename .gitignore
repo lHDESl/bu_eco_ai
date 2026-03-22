@@ -8,6 +8,7 @@ node_modules/
 out/
 dist/
 coverage/
+tsconfig.tsbuildinfo
 
 # Env files
 .env

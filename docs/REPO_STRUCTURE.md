@@ -11,18 +11,20 @@
 | `data/catalog/` | active | source metadata catalog |
 | `data/evals/` | active | evaluation fixtures |
 | `specs/` | active | machine-readable API contract |
+| `src/` | active | Next.js app routes, UI, and server-side integration |
+| `scripts/` | active | ingestion script and future maintenance tooling |
 | `.github/` | active | standard repository templates |
 
-## Planned Implementation Structure
+## Current Implementation Structure
 
-These paths are expected once coding begins.
+These paths are already in active use.
 
 | Path | Purpose |
 | --- | --- |
 | `src/app/` | Next.js app routes and pages |
 | `src/components/` | UI components |
 | `src/lib/openai/` | OpenAI client, prompt, schema, citation normalization |
-| `src/lib/sources/` | source catalog loading and metadata helpers |
+| `src/lib/source-catalog.ts` | source catalog loading and metadata helpers |
 | `scripts/` | ingestion and maintenance scripts |
 | `tests/` | contract tests and evaluation helpers |
 

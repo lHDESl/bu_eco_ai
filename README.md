@@ -2,17 +2,17 @@
 
 EcoGuide AI is a document-first repository for a Cheonan-focused waste disposal assistant. The product goal is simple: let a resident ask in Korean, with text or an image, how an item should be disposed of, and return an answer grounded in official sources.
 
-This repository is intentionally being bootstrapped with documentation before application code. The immediate goal is to make the repo understandable and operable by any AI coding agent, not only by the original author.
+This repository started as a documentation-first bootstrap and now includes the first working MVP implementation. The repo is still organized so that any AI coding agent can pick it up quickly without relying on tribal knowledge.
 
 ## Current Status
 
-- Status: document-first bootstrap
-- Product phase: v1 prototype planning
+- Status: MVP scaffold implemented
+- Product phase: v1 prototype in progress
 - Geographic scope: `천안시` only
 - Target interaction: `text + image upload`
 - Intended AI backend: OpenAI `Responses API` + `File Search`
 - Primary AI collaboration target: `Codex` via `AGENTS.md`
-- Runtime application code: not scaffolded yet
+- Runtime application code: Next.js app, API routes, and ingestion starter are implemented
 
 ## Why This Repo Exists
 
@@ -46,6 +46,7 @@ This repository is intentionally being bootstrapped with documentation before ap
 5. `docs/API_GUIDE.md`
 6. `docs/IMPLEMENTATION_BACKLOG.md`
 7. `data/catalog/source_catalog.yaml`
+8. `docs/DEPLOYMENT.md`
 
 ## Repository Map
 
@@ -54,6 +55,8 @@ This repository is intentionally being bootstrapped with documentation before ap
 - `data/catalog/`: source catalog and ingestion metadata conventions
 - `data/evals/`: seed evaluation cases
 - `specs/`: machine-readable interface definitions
+- `src/`: Next.js UI, route handlers, shared server/client code
+- `scripts/`: ingestion and maintenance scripts
 - `Requirements/`: original project requirement inputs and team deliverable context
 - `DataSet/`: raw authoritative domain documents used for retrieval planning
 - `.github/`: standard repository templates only
@@ -68,7 +71,7 @@ The canonical API contract lives in `specs/openapi.yaml`.
 
 ## Baseline Stack Targets
 
-These are documentation targets as of `2026-03-22`. They are not installed yet.
+These are the current implementation targets as of `2026-03-22`.
 
 - `next@16.2.1`
 - `react@19.2.4`
@@ -78,7 +81,7 @@ These are documentation targets as of `2026-03-22`. They are not installed yet.
 - `@ai-sdk/openai@3.0.47`
 - `tailwindcss@4.2.2`
 - `zod@4.3.6`
-- `eslint@10.1.0`
+- `eslint@9.39.4`
 - `prettier@3.8.1`
 
 ## Source Of Truth
@@ -117,3 +120,52 @@ Keep `Requirements/` and `DataSet/` in the repository for now.
 - M3: implement chat API and prompt guardrails
 - M4: build the web UI and demo scenarios
 - M5: add evaluation fixtures and prototype QA
+
+## Quick Start
+
+1. Install dependencies:
+   - `npm install`
+2. Copy env values from `.env.example` into `.env.local`
+3. Set:
+   - `OPENAI_API_KEY`
+   - `OPENAI_VECTOR_STORE_ID`
+4. Start the app:
+   - `npm run dev`
+5. Optional source ingestion:
+   - `npm run ingest -- --dry-run`
+   - `npm run ingest`
+
+## Validation
+
+The current implementation has been verified with:
+
+- `npm run typecheck`
+- `npm run lint`
+- `npm run build`
+- `npm run ingest -- --dry-run`
+
+## Vercel Deployment
+
+Vercel is a good fit for this project because the app is built on `Next.js App Router` and only needs server-side route handlers plus environment variables.
+
+Recommended setup:
+
+1. Import the repository into Vercel.
+2. Keep the framework preset as `Next.js`.
+3. Add the same environment variables used locally:
+   - `OPENAI_API_KEY`
+   - `OPENAI_MODEL`
+   - `OPENAI_FALLBACK_MODEL`
+   - `OPENAI_VECTOR_STORE_ID`
+   - `OPENAI_FILE_SEARCH_MAX_RESULTS`
+   - `APP_REGION_CODE`
+   - `APP_REGION_NAME`
+   - `NEXT_PUBLIC_APP_NAME`
+   - `NEXT_PUBLIC_APP_REGION_LABEL`
+4. Deploy to preview first, then production.
+
+Notes:
+
+- `POST /api/chat` is implemented as a Node runtime route handler and is Vercel-friendly.
+- Uploaded images are handled per request and are not persisted by the app in v1.
+- Re-ingesting official sources should be done locally or in a controlled environment, then the resulting vector store ID can be reused in Vercel.

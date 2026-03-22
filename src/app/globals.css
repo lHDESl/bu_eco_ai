@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f4efe7;
+  --background-accent: #e3efe4;
+  --surface: rgba(255, 252, 246, 0.88);
+  --surface-strong: #fffdf8;
+  --border: rgba(49, 73, 54, 0.14);
+  --foreground: #1f2a21;
+  --muted: #536255;
+  --primary: #1d6b43;
+  --primary-strong: #144c30;
+  --warning: #a36016;
+  --danger: #9b2d30;
+  --shadow: 0 22px 60px rgba(32, 47, 35, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(61, 145, 93, 0.18), transparent 35%),
+    radial-gradient(circle at top right, rgba(227, 174, 90, 0.18), transparent 32%),
+    linear-gradient(180deg, var(--background), #f8f4eb);
+  color: var(--foreground);
+  font-family: var(--font-body), sans-serif;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.page-shell {
+  position: relative;
+  overflow: hidden;
+}
+
+.page-shell::before,
+.page-shell::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+.page-shell::before {
+  top: -7rem;
+  right: -4rem;
+  width: 20rem;
+  height: 20rem;
+  background: rgba(80, 169, 114, 0.12);
+}
+
+.page-shell::after {
+  bottom: -8rem;
+  left: -6rem;
+  width: 18rem;
+  height: 18rem;
+  background: rgba(236, 191, 123, 0.16);
+}
+
+.card-surface {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+}
+
+.section-title {
+  font-family: var(--font-display), serif;
+  letter-spacing: -0.02em;
+}

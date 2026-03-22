@@ -44,6 +44,7 @@ This directory is the canonical human-readable specification set for the project
 - `DATA_SOURCES.md`: source-of-truth catalog and metadata rules
 - `EVALUATION_PLAN.md`: evaluation goals, fixtures, rubric
 - `INGESTION_GUIDE.md`: ingestion pipeline design and metadata conventions
+- `DEPLOYMENT.md`: local, Vercel, and ingestion deployment workflow
 - `PROMPT_AND_GUARDRAILS.md`: answer behavior and prompt contract
 - `DEVELOPMENT_WORKFLOW.md`: workflow for humans and AI agents
 - `IMPLEMENTATION_BACKLOG.md`: ordered build tasks with acceptance criteria

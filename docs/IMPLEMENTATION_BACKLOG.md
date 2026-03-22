@@ -30,16 +30,16 @@ This backlog is intentionally implementation-ready. Each item is meant to be sma
 
 ## Phase 1: App Bootstrap
 
-### APP-001 `next`
+### APP-001 `done`
 
 - Outcome: scaffold a `Next.js 16 + TypeScript + Tailwind 4` app shell
 - Suggested files: `package.json`, `src/app/`, `src/components/`, `src/lib/`
 - Acceptance criteria:
   - app starts locally
   - base layout renders
-  - no business logic yet
+  - base app shell, API routes, and shared contracts are in place
 
-### APP-002 `planned`
+### APP-002 `done`
 
 - Outcome: add repository scripts, linting, formatting, and env loading
 - Suggested files: package config, lint config, app env utilities
@@ -49,7 +49,7 @@ This backlog is intentionally implementation-ready. Each item is meant to be sma
 
 ## Phase 2: Source Ingestion
 
-### INGEST-001 `next`
+### INGEST-001 `done`
 
 - Outcome: validate source catalog and normalize source metadata
 - Suggested files: `scripts/ingest-docs.ts`, `src/lib/sources/`
@@ -57,7 +57,7 @@ This backlog is intentionally implementation-ready. Each item is meant to be sma
   - source catalog loads successfully
   - invalid source entries fail fast with readable errors
 
-### INGEST-002 `planned`
+### INGEST-002 `done`
 
 - Outcome: extract official source text and upload to OpenAI vector store
 - Acceptance criteria:
@@ -67,7 +67,7 @@ This backlog is intentionally implementation-ready. Each item is meant to be sma
 
 ## Phase 3: API
 
-### API-001 `planned`
+### API-001 `done`
 
 - Outcome: implement `GET /api/health`
 - Acceptance criteria:
@@ -75,14 +75,14 @@ This backlog is intentionally implementation-ready. Each item is meant to be sma
   - detects missing `OPENAI_API_KEY`
   - detects missing `OPENAI_VECTOR_STORE_ID`
 
-### API-002 `planned`
+### API-002 `done`
 
 - Outcome: implement request validation and stable error shapes for `POST /api/chat`
 - Acceptance criteria:
   - invalid form data returns structured errors
   - upload constraints are enforced
 
-### API-003 `planned`
+### API-003 `done`
 
 - Outcome: integrate OpenAI `Responses API` with `File Search`
 - Acceptance criteria:
@@ -90,7 +90,7 @@ This backlog is intentionally implementation-ready. Each item is meant to be sma
   - citations are normalized into API response format
   - clarification path is supported
 
-### API-004 `planned`
+### API-004 `done`
 
 - Outcome: add optional image handling for `POST /api/chat`
 - Acceptance criteria:
@@ -99,7 +99,7 @@ This backlog is intentionally implementation-ready. Each item is meant to be sma
 
 ## Phase 4: UI
 
-### UI-001 `planned`
+### UI-001 `done`
 
 - Outcome: build the main page with question input and upload UI
 - Acceptance criteria:
@@ -107,7 +107,7 @@ This backlog is intentionally implementation-ready. Each item is meant to be sma
   - clear region label for `천안시`
   - example questions visible
 
-### UI-002 `planned`
+### UI-002 `done`
 
 - Outcome: render answer card, preparation steps, citations, and clarification prompts
 - Acceptance criteria:
@@ -116,7 +116,7 @@ This backlog is intentionally implementation-ready. Each item is meant to be sma
 
 ## Phase 5: Evaluation And Demo
 
-### EVAL-001 `planned`
+### EVAL-001 `next`
 
 - Outcome: expand eval set to `20-30` curated cases
 - Acceptance criteria:
@@ -130,7 +130,7 @@ This backlog is intentionally implementation-ready. Each item is meant to be sma
   - response schema can be checked automatically
   - scoring rules are documented in code or fixtures
 
-### DEMO-001 `planned`
+### DEMO-001 `next`
 
 - Outcome: finalize three stable demo scenarios and a rehearsal checklist
 - Acceptance criteria:

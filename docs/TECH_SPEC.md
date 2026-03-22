@@ -3,7 +3,7 @@
 ## Document Status
 
 - Version: `0.1`
-- Status: target architecture
+- Status: initial implementation aligned
 - Last updated: `2026-03-22`
 
 ## Architecture Summary
@@ -24,7 +24,7 @@ Target package versions confirmed on `2026-03-22`:
 | AI SDK OpenAI provider | `@ai-sdk/openai@3.0.47` |
 | Styling | `tailwindcss@4.2.2` |
 | Schema validation | `zod@4.3.6` |
-| Linting | `eslint@10.1.0` |
+| Linting | `eslint@9.39.4` |
 | Formatting | `prettier@3.8.1` |
 
 ## Major Decisions
@@ -36,7 +36,7 @@ Target package versions confirmed on `2026-03-22`:
 - Avoid a relational database in v1.
 - Keep the API response schema explicit and stable.
 
-## Planned Runtime Components
+## Runtime Components
 
 ### Web UI
 
@@ -50,7 +50,7 @@ Responsibilities:
 
 ### API Layer
 
-Planned endpoints:
+Current endpoints:
 
 - `GET /api/health`
 - `POST /api/chat`
@@ -151,19 +151,20 @@ Planned minimum config:
 - `NEXT_PUBLIC_APP_NAME`
 - `NEXT_PUBLIC_APP_REGION_LABEL`
 
-## Planned File Layout For Implementation
-
-These files are planned, not yet created:
+## Current File Layout
 
 - `src/app/page.tsx`
 - `src/app/api/health/route.ts`
 - `src/app/api/chat/route.ts`
-- `src/components/chat-form.tsx`
+- `src/components/question-workspace.tsx`
 - `src/components/answer-card.tsx`
 - `src/components/citation-list.tsx`
 - `src/lib/openai/client.ts`
+- `src/lib/openai/chat.ts`
 - `src/lib/openai/prompt.ts`
 - `src/lib/openai/response-schema.ts`
+- `src/lib/config.ts`
+- `src/lib/source-catalog.ts`
 - `scripts/ingest-docs.ts`
 
 ## Error Handling Strategy
