@@ -53,6 +53,55 @@ Set these in Vercel for both preview and production:
    - `POST /api/chat` with real environment variables
 7. Promote to production after manual verification.
 
+## GitHub Actions Auto Deploy
+
+This repository now includes:
+
+- `.github/workflows/vercel-preview.yml`
+- `.github/workflows/vercel-production.yml`
+
+The workflows follow Vercel's recommended GitHub Actions flow:
+
+1. `vercel pull`
+2. `vercel build`
+3. `vercel deploy --prebuilt`
+
+Official reference:
+
+- https://vercel.com/kb/guide/how-can-i-use-github-actions-with-vercel
+
+### Trigger Rules
+
+- Preview deployment:
+  - runs on every push to non-`main` branches
+- Production deployment:
+  - runs on every push to `main`
+
+### Required GitHub Secrets
+
+Add these repository secrets in GitHub:
+
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+The workflows are intentionally guarded so they will be skipped until all three secrets exist.
+
+### How To Get `VERCEL_ORG_ID` And `VERCEL_PROJECT_ID`
+
+Vercel's documented method is:
+
+1. Create or link a Vercel project with `vercel link`
+2. Read `.vercel/project.json`
+3. Copy:
+   - `orgId`
+   - `projectId`
+4. Store them as GitHub secrets
+
+### Current Blocker
+
+At the moment, local Vercel CLI authentication works, but Vercel project creation is still blocked by account permissions. That means the workflows are committed and ready, but GitHub secrets for `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` still need to be populated before deploy runs can succeed.
+
 ## Ingestion Workflow
 
 Do not rely on the Vercel build step for source ingestion.
