@@ -53,52 +53,39 @@ Set these in Vercel for both preview and production:
    - `POST /api/chat` with real environment variables
 7. Promote to production after manual verification.
 
-## GitHub Actions Auto Deploy
+## GitHub Actions Validation
 
 This repository now includes:
 
 - `.github/workflows/vercel-preview.yml`
 - `.github/workflows/vercel-production.yml`
 
-The workflows follow Vercel's recommended GitHub Actions flow:
+These workflows are intentionally limited to repository validation:
 
-1. `vercel pull`
-2. `vercel build`
-3. `vercel deploy --prebuilt`
+1. `npm ci`
+2. `npm run lint`
+3. `npm run typecheck`
+4. `npm run build`
 
-Official reference:
-
-- https://vercel.com/kb/guide/how-can-i-use-github-actions-with-vercel
+Deployment is handled by Vercel's native Git integration, not by GitHub Actions.
 
 ### Trigger Rules
 
-- Preview deployment:
+- Branch validation:
   - runs on every push to non-`main` branches
-- Production deployment:
+- Main validation:
   - runs on every push to `main`
 
 ### Required GitHub Secrets
 
-Add this repository secret in GitHub:
-
-- `VERCEL_TOKEN`
-
-The workflows are intentionally guarded so they will be skipped until `VERCEL_TOKEN` exists.
-
-### Project Identifiers
-
-This repository is already linked to the Vercel project and the workflow files now include:
-
-- `VERCEL_ORG_ID=team_zUA40JSygqoUd5ZPxAJog9Ck`
-- `VERCEL_PROJECT_ID=prj_OQQkwo1jKThJU6qwjFyK61N8r6q6`
-
-These identifiers are not treated as secrets here. Only the token remains secret.
+None for deployment. Vercel deploys directly from the connected Git repository.
 
 ### Current Status
 
 - The Vercel project `bu-eco-ai` has been created and linked.
 - Required runtime environment variables have been provisioned in Vercel for `development`, `preview`, and `production`.
-- GitHub Actions workflows are ready and only need the GitHub repository secret `VERCEL_TOKEN`.
+- GitHub Actions now serve as CI only.
+- Vercel Git integration is the single deployment path for preview and production.
 
 ## Ingestion Workflow
 

@@ -168,3 +168,4 @@ Notes:
 - Uploaded images are handled per request and are not persisted by the app in v1.
 - Re-ingesting official sources should be done locally or in a controlled environment, then the resulting vector store ID can be reused in Vercel.
 - The Cheonan municipal source is stored as a local snapshot text file for reproducible ingestion when the public page is not reliably fetchable.
+- Deployments are handled by Vercel Git integration. GitHub Actions only run validation checks.

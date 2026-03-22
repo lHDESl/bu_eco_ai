@@ -1,4 +1,4 @@
-name: Vercel Production Deployment
+name: CI Main Validation
 
 on:
   push:
@@ -7,29 +7,17 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: vercel-production-main
+  group: ci-main-validation
   cancel-in-progress: true
 
 env:
   NODE_VERSION: "24"
-  VERCEL_ORG_ID: team_zUA40JSygqoUd5ZPxAJog9Ck
-  VERCEL_PROJECT_ID: prj_OQQkwo1jKThJU6qwjFyK61N8r6q6
 
 jobs:
-  deploy-production:
+  validate-main:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Validate deployment secrets
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: |
-          if [ -z "$VERCEL_TOKEN" ]; then
-            echo "VERCEL_TOKEN secret is not configured."
-            exit 1
-          fi
-        shell: bash
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -47,26 +35,14 @@ jobs:
           npm run lint
           npm run typecheck
 
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-
-      - name: Pull Vercel production environment
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Build production artifacts
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deploy production to Vercel
-        id: deploy
-        run: |
-          $deploymentUrl = vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
-          "deployment_url=$deploymentUrl" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-        shell: pwsh
+      - name: Build application
+        run: npm run build
 
       - name: Publish step summary
         run: |
-          echo "## Production Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "## Main Branch Validation" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- Commit: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- URL: ${{ steps.deploy.outputs.deployment_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Checks: lint, typecheck, build" >> $GITHUB_STEP_SUMMARY
+          echo "- Deployment: handled by Vercel Git integration" >> $GITHUB_STEP_SUMMARY
         shell: bash
