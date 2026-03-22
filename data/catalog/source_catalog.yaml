@@ -1,0 +1,66 @@
+﻿version: 1
+generated_at: 2026-03-22
+defaults:
+  region: cheonan-si
+  locale: ko-KR
+  authoritative_only: true
+authoritative_source_ids:
+  - me-recycling-guide-2018
+  - cheonan-waste-disposal-page
+sources:
+  - id: project-requirements-main
+    authority: project-team
+    title: 인공지능.pdf
+    region: cheonan-si
+    doc_type: requirements_pdf
+    local_path: Requirements/인공지능.pdf
+    remote_url: null
+    published_at: null
+    last_checked_at: 2026-03-22
+    usage: planning_only
+    notes: Main project requirement input provided by the team.
+  - id: project-report-team4
+    authority: project-team
+    title: "[인공지능 4팀] 추진보고서_20214318_이병현hwp.pdf"
+    region: cheonan-si
+    doc_type: project_report_pdf
+    local_path: Requirements/[인공지능 4팀] 추진보고서_20214318_이병현hwp.pdf
+    remote_url: null
+    published_at: null
+    last_checked_at: 2026-03-22
+    usage: planning_only
+    notes: Team report used for presentation context, not disposal truth.
+  - id: me-recycling-guide-2018
+    authority: 환경부
+    title: 재활용품 분리배출 가이드라인(웹용)-최종.pdf
+    region: korea
+    doc_type: guideline_pdf
+    local_path: DataSet/재활용품 분리배출 가이드라인(웹용)-최종.pdf
+    remote_url: https://www.me.go.kr/m/mob/board/read.do%3Bjsessionid%3D6ZEOzR00wQsaUCjfdc9jAKQX7RCjYe41HeKW8xgk.mehome1?boardCategoryId=&boardId=875840&boardMasterId=54&maxIndexPages=10&maxPageItems=10&menuId=51&orgCd=&pagerOffset=0&searchKey=&searchValue=
+    published_at: 2018-07-03
+    last_checked_at: 2026-03-22
+    usage: authoritative_domain_source
+    notes: Primary national recycling guidance for v1.
+  - id: cheonan-waste-disposal-page
+    authority: 천안시
+    title: 생활폐기물 배출방법안내
+    region: cheonan-si
+    doc_type: webpage
+    local_path: null
+    remote_url: https://lll.cheonan.go.kr/kor/sub06_13_06.do
+    published_at: null
+    last_checked_at: 2026-03-22
+    usage: authoritative_domain_source
+    notes: Primary municipal disposal guidance for v1.
+ingestion_metadata_template:
+  required_fields:
+    - source_id
+    - authority
+    - region
+    - doc_type
+  optional_fields:
+    - effective_date
+    - section_title
+    - page
+    - tags
+    - source_url

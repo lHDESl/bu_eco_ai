@@ -1,0 +1,195 @@
+﻿openapi: 3.1.0
+info:
+  title: EcoGuide AI API
+  version: 0.1.0
+  summary: Cheonan-focused waste disposal assistant API
+  description: |
+    Pre-v1 API contract for a Cheonan-specific waste disposal assistant.
+    This contract is designed to stay stable across prompt and UI changes.
+servers:
+  - url: http://localhost:3000
+    description: Local development
+paths:
+  /api/health:
+    get:
+      operationId: getHealth
+      summary: Report service readiness
+      responses:
+        '200':
+          description: Health payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              examples:
+                ok:
+                  value:
+                    service: EcoGuide AI
+                    status: ok
+                    region: cheonan-si
+                    checks:
+                      openai_api_key: true
+                      vector_store_id: true
+  /api/chat:
+    post:
+      operationId: postChat
+      summary: Ask a waste disposal question
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - question
+              properties:
+                question:
+                  type: string
+                  description: User question in Korean
+                image:
+                  type: string
+                  format: binary
+                  description: Optional image upload
+                region:
+                  type: string
+                  default: cheonan-si
+                  description: Reserved for future multi-region support
+                session_id:
+                  type: string
+                  description: Optional client-generated correlation token
+      responses:
+        '200':
+          description: Structured disposal answer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Missing runtime configuration or temporary upstream issue
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - service
+        - status
+        - region
+        - checks
+      properties:
+        service:
+          type: string
+          example: EcoGuide AI
+        status:
+          type: string
+          enum: [ok, degraded]
+        region:
+          type: string
+          example: cheonan-si
+        checks:
+          type: object
+          required:
+            - openai_api_key
+            - vector_store_id
+          properties:
+            openai_api_key:
+              type: boolean
+            vector_store_id:
+              type: boolean
+    ChatResponse:
+      type: object
+      required:
+        - decision
+        - reason
+        - prep_steps
+        - citations
+        - needs_clarification
+        - follow_up_question
+        - request_id
+      properties:
+        decision:
+          type: string
+        reason:
+          type: string
+        prep_steps:
+          type: array
+          items:
+            type: string
+        citations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Citation'
+        needs_clarification:
+          type: boolean
+        follow_up_question:
+          type:
+            - string
+            - 'null'
+        request_id:
+          type: string
+    Citation:
+      type: object
+      required:
+        - source_id
+        - title
+        - authority
+        - url
+        - page_hint
+        - excerpt
+      properties:
+        source_id:
+          type: string
+        title:
+          type: string
+        authority:
+          type: string
+        url:
+          type:
+            - string
+            - 'null'
+          format: uri
+        page_hint:
+          type:
+            - string
+            - 'null'
+        excerpt:
+          type:
+            - string
+            - 'null'
+    ErrorEnvelope:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorBody'
+    ErrorBody:
+      type: object
+      required:
+        - code
+        - message
+        - retryable
+      properties:
+        code:
+          type: string
+          enum:
+            - INVALID_REQUEST
+            - UNSUPPORTED_FILE_TYPE
+            - FILE_TOO_LARGE
+            - OPENAI_API_KEY_MISSING
+            - VECTOR_STORE_NOT_CONFIGURED
+            - UPSTREAM_OPENAI_ERROR
+            - INTERNAL_SERVER_ERROR
+        message:
+          type: string
+        retryable:
+          type: boolean

@@ -1,0 +1,49 @@
+﻿# EcoGuide AI
+
+EcoGuide AI is a Cheonan-specific waste disposal assistant. This repository is currently documentation-first and is designed to be readable by both humans and AI coding agents.
+
+Start here, in order:
+
+- README.md
+- AGENTS.md
+- docs/README.md
+- docs/PRD.md
+- docs/TECH_SPEC.md
+- docs/API_GUIDE.md
+- docs/PROMPT_AND_GUARDRAILS.md
+- docs/IMPLEMENTATION_BACKLOG.md
+- data/catalog/source_catalog.yaml
+- specs/openapi.yaml
+
+Project goal:
+
+- Answer waste disposal questions for Cheonan residents using official sources.
+- Accept text and optional image input.
+- Return a disposal decision, reason, preparation steps, citations, and a follow-up question when needed.
+
+Current state:
+
+- Repository bootstrap is documentation-first.
+- App code has not been scaffolded yet.
+- Interface and workflow specs are already defined.
+
+Authoritative sources:
+
+- Requirements/인공지능.pdf
+- Requirements/[인공지능 4팀] 추진보고서_20214318_이병현hwp.pdf
+- DataSet/재활용품 분리배출 가이드라인(웹용)-최종.pdf
+- https://www.me.go.kr/m/mob/board/read.do%3Bjsessionid%3D6ZEOzR00wQsaUCjfdc9jAKQX7RCjYe41HeKW8xgk.mehome1?boardCategoryId=&boardId=875840&boardMasterId=54&maxIndexPages=10&maxPageItems=10&menuId=51&orgCd=&pagerOffset=0&searchKey=&searchValue=
+- https://lll.cheonan.go.kr/kor/sub06_13_06.do
+
+Planned public interfaces:
+
+- GET /api/health
+- POST /api/chat
+- Local ingestion workflow for official source documents
+
+Rules:
+
+- Do not invent disposal rules.
+- Prefer clarification over unsupported certainty.
+- Keep docs, schemas, and code aligned.
+- Treat official sources as higher priority than prompt wording.

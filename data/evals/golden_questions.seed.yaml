@@ -1,0 +1,59 @@
+﻿version: 0.1
+status: seed
+last_updated: 2026-03-22
+cases:
+  - id: eval-001
+    modality: text
+    authority_source_ids:
+      - cheonan-waste-disposal-page
+    question: 일반 생활쓰레기는 어떻게 버리나요?
+    expected:
+      decision_should_contain:
+        - 종량제 봉투
+      citation_source_ids:
+        - cheonan-waste-disposal-page
+      needs_clarification: false
+  - id: eval-002
+    modality: text
+    authority_source_ids:
+      - cheonan-waste-disposal-page
+    question: 집에 남은 폐의약품은 어디에 버리나요?
+    expected:
+      decision_should_contain:
+        - 약국
+      citation_source_ids:
+        - cheonan-waste-disposal-page
+      needs_clarification: false
+  - id: eval-003
+    modality: text
+    authority_source_ids:
+      - cheonan-waste-disposal-page
+    question: 대형폐기물은 어떻게 신청하나요?
+    expected:
+      decision_should_contain:
+        - 대형폐기물
+      citation_source_ids:
+        - cheonan-waste-disposal-page
+      needs_clarification: false
+  - id: eval-004
+    modality: text
+    authority_source_ids:
+      - cheonan-waste-disposal-page
+    question: 공사하다 나온 소량 폐기물은 어떻게 버리나요?
+    expected:
+      decision_should_contain:
+        - 전용마대
+      citation_source_ids:
+        - cheonan-waste-disposal-page
+      needs_clarification: false
+  - id: eval-005
+    modality: text
+    authority_source_ids:
+      - cheonan-waste-disposal-page
+    question: 재활용 관련 정보를 더 자세히 어디서 볼 수 있나요?
+    expected:
+      decision_should_contain:
+        - 분리배출
+      citation_source_ids:
+        - cheonan-waste-disposal-page
+      needs_clarification: false
