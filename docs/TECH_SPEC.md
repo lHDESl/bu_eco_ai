@@ -20,12 +20,10 @@ Target package versions confirmed on `2026-03-22`:
 | UI runtime | `react@19.2.4` |
 | Language | `typescript@5.9.3` |
 | OpenAI SDK | `openai@6.32.0` |
-| AI SDK | `ai@6.0.134` |
-| AI SDK OpenAI provider | `@ai-sdk/openai@3.0.47` |
 | Styling | `tailwindcss@4.2.2` |
 | Schema validation | `zod@4.3.6` |
 | Linting | `eslint@9.39.4` |
-| Formatting | `prettier@3.8.1` |
+| Script runner | `tsx@4.21.0` |
 
 ## Major Decisions
 
@@ -82,6 +80,7 @@ Responsibilities:
 - upload files to OpenAI
 - attach file metadata for future filtering
 - record vector store usage conventions
+- prefer repo-local snapshots when an authoritative web page cannot be fetched reliably
 
 ## Planned Data Flow
 

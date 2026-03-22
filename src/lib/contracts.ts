@@ -4,7 +4,7 @@ export const citationSchema = z.object({
   source_id: z.string().trim().min(1),
   title: z.string().trim().min(1),
   authority: z.string().trim().min(1),
-  url: z.union([z.url(), z.null()]),
+  url: z.union([z.string().trim().min(1), z.null()]),
   page_hint: z.union([z.string().trim(), z.null()]),
   excerpt: z.union([z.string().trim(), z.null()]),
 });

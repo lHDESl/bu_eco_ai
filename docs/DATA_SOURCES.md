@@ -9,7 +9,7 @@ This document defines which documents are authoritative for the product and how 
 | Source ID | Authority | Title | Local Path | Public URL | Published / Checked | Scope | Usage |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `me-recycling-guide-2018` | 환경부 | 재활용품 분리배출 가이드라인(웹용)-최종.pdf | `DataSet/재활용품 분리배출 가이드라인(웹용)-최종.pdf` | `https://www.me.go.kr/m/mob/board/read.do%3Bjsessionid%3D6ZEOzR00wQsaUCjfdc9jAKQX7RCjYe41HeKW8xgk.mehome1?boardCategoryId=&boardId=875840&boardMasterId=54&maxIndexPages=10&maxPageItems=10&menuId=51&orgCd=&pagerOffset=0&searchKey=&searchValue=` | published `2018-07-03`, checked `2026-03-22` | national recycling guidance | primary national retrieval source |
-| `cheonan-waste-disposal-page` | 천안시 | 생활폐기물 배출방법안내 | n/a | `https://lll.cheonan.go.kr/kor/sub06_13_06.do` | checked `2026-03-22` | Cheonan disposal guidance | primary municipal retrieval source |
+| `cheonan-waste-disposal-page` | 천안시 | 생활폐기물 배출방법안내 | `DataSet/천안시_생활폐기물_배출방법안내_2026-03-22.txt` | `https://lll.cheonan.go.kr/kor/sub06_13_06.do` | checked `2026-03-22` | Cheonan disposal guidance | primary municipal retrieval source via local snapshot |
 
 ## Project Input Documents
 
@@ -59,5 +59,5 @@ Every source chunk should eventually carry metadata for retrieval filtering.
 ## Follow-Up Work
 
 - extract structured text from the environment ministry PDF
-- capture a snapshot or structured export of the Cheonan municipal page
+- refresh the Cheonan municipal snapshot when the official page changes
 - expand the source catalog with section-level metadata after ingestion tooling exists

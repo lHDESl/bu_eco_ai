@@ -46,12 +46,12 @@ sources:
     title: 생활폐기물 배출방법안내
     region: cheonan-si
     doc_type: webpage
-    local_path: null
+    local_path: DataSet/천안시_생활폐기물_배출방법안내_2026-03-22.txt
     remote_url: https://lll.cheonan.go.kr/kor/sub06_13_06.do
     published_at: null
     last_checked_at: 2026-03-22
     usage: authoritative_domain_source
-    notes: Primary municipal disposal guidance for v1.
+    notes: Primary municipal disposal guidance for v1. Local snapshot is kept for reproducible ingestion.
 ingestion_metadata_template:
   required_fields:
     - source_id

@@ -77,12 +77,10 @@ These are the current implementation targets as of `2026-03-22`.
 - `react@19.2.4`
 - `typescript@5.9.3`
 - `openai@6.32.0`
-- `ai@6.0.134`
-- `@ai-sdk/openai@3.0.47`
 - `tailwindcss@4.2.2`
 - `zod@4.3.6`
 - `eslint@9.39.4`
-- `prettier@3.8.1`
+- `tsx@4.21.0`
 
 ## Source Of Truth
 
@@ -169,3 +167,4 @@ Notes:
 - `POST /api/chat` is implemented as a Node runtime route handler and is Vercel-friendly.
 - Uploaded images are handled per request and are not persisted by the app in v1.
 - Re-ingesting official sources should be done locally or in a controlled environment, then the resulting vector store ID can be reused in Vercel.
+- The Cheonan municipal source is stored as a local snapshot text file for reproducible ingestion when the public page is not reliably fetchable.
