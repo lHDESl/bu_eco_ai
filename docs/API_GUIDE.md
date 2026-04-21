@@ -1,4 +1,4 @@
-﻿# API Guide
+# API Guide
 
 The canonical machine-readable contract is `../specs/openapi.yaml`. This document explains the same API in implementation-friendly prose.
 
@@ -8,6 +8,7 @@ The canonical machine-readable contract is `../specs/openapi.yaml`. This documen
 - The client receives stable, structured JSON.
 - The server hides provider-specific response details.
 - All non-error answers should include at least one citation.
+- When an image is present, the server may return a short inferred item label for UI feedback, but the disposal decision must still be grounded in official sources.
 
 ## Endpoint Summary
 
@@ -73,6 +74,7 @@ Use `multipart/form-data` for v1 because the request may contain an image.
 | `citations` | object[] | Source references supporting the answer |
 | `needs_clarification` | boolean | Whether more info is needed |
 | `follow_up_question` | string or null | Next question to ask the user |
+| `identified_item` | string or null | Short Korean label for the item inferred from the uploaded image, when available |
 | `request_id` | string | Server-generated traceable request id |
 
 ### Citation Object
@@ -86,16 +88,22 @@ Use `multipart/form-data` for v1 because the request may contain an image.
 | `page_hint` | string or null | Optional page or section hint |
 | `excerpt` | string or null | Optional short supporting snippet |
 
+Citation normalization rules:
+
+- `source_id` must match an authoritative source in `data/catalog/source_catalog.yaml`
+- the cited source must also appear in the current `file_search_call.results`
+- `title`, `authority`, and `url` are canonicalized from the source catalog rather than trusting model-generated values
+
 ### Example Success Response
 
 ```json
 {
-  "decision": "가연성 생활폐기물은 종량제 봉투에 담아 배출하세요.",
-  "reason": "천안시 안내 기준으로 일반 가연성 생활폐기물은 종량제 봉투 배출 대상입니다.",
+  "decision": "오염이 심한 플라스틱 배달용기는 일반쓰레기로 배출해 주세요.",
+  "reason": "천안시 안내와 환경부 분리배출 가이드를 기준으로 내용물이 많이 남았거나 세척이 어려운 플라스틱 용기는 재활용 품목으로 보기 어렵습니다.",
   "prep_steps": [
-    "내용물을 비웁니다.",
-    "천안시 종량제 봉투에 담습니다.",
-    "생활폐기물 배출장소에 배출합니다."
+    "남은 음식물과 기름기를 최대한 비워 주세요.",
+    "세척이 어렵다면 종량제 봉투에 담아 주세요.",
+    "뚜껑이나 다른 재질 부품은 분리 가능하면 따로 떼어 주세요."
   ],
   "citations": [
     {
@@ -109,6 +117,7 @@ Use `multipart/form-data` for v1 because the request may contain an image.
   ],
   "needs_clarification": false,
   "follow_up_question": null,
+  "identified_item": "플라스틱 배달용기",
   "request_id": "req_demo_001"
 }
 ```
@@ -120,11 +129,12 @@ Use this when the system cannot safely decide from the input.
 ```json
 {
   "decision": "정확한 배출 방법을 확정하기 어렵습니다.",
-  "reason": "사진만으로는 재질과 오염 정도를 확실히 구분하기 어렵습니다.",
+  "reason": "사진과 질문만으로는 재질과 오염 정도를 확실히 구분하기 어렵습니다.",
   "prep_steps": [],
   "citations": [],
   "needs_clarification": true,
   "follow_up_question": "플라스틱 용기인가요, 아니면 비닐이나 복합재질인가요?",
+  "identified_item": null,
   "request_id": "req_demo_002"
 }
 ```
@@ -157,7 +167,7 @@ All error responses should use a stable structure.
 
 ```bash
 curl -X POST http://localhost:3000/api/chat \
-  -F "question=가정에서 나온 폐의약품은 어디에 버리나요?" \
+  -F "question=폐의약품은 어디에 버리나요?" \
   -F "region=cheonan-si"
 ```
 

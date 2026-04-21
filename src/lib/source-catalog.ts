@@ -14,6 +14,8 @@ const sourceCatalogSchema = z.object({
       doc_type: z.string(),
       local_path: z.union([z.string(), z.null()]),
       remote_url: z.union([z.url(), z.null()]),
+      published_at: z.union([z.string(), z.null()]).optional(),
+      last_checked_at: z.union([z.string(), z.null()]).optional(),
       usage: z.string(),
       notes: z.string(),
     }),
@@ -40,4 +42,8 @@ export function getAuthoritativeSources() {
   const catalog = getSourceCatalog();
   const authoritativeIds = new Set(catalog.authoritative_source_ids);
   return catalog.sources.filter((source) => authoritativeIds.has(source.id));
+}
+
+export function getAuthoritativeSourceMap() {
+  return new Map(getAuthoritativeSources().map((source) => [source.id, source]));
 }

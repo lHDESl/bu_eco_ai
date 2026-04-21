@@ -16,6 +16,7 @@ export const chatResponseSchema = z.object({
   citations: z.array(citationSchema).default([]),
   needs_clarification: z.boolean(),
   follow_up_question: z.union([z.string().trim(), z.null()]),
+  identified_item: z.union([z.string().trim(), z.null()]).default(null),
   request_id: z.string().trim().min(1),
 });
 

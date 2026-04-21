@@ -1,3 +1,4 @@
+import { loadEnvConfig } from "@next/env";
 import { createReadStream, existsSync } from "node:fs";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -5,8 +6,11 @@ import { basename, join, resolve } from "node:path";
 import OpenAI, { toFile } from "openai";
 import { getSourceCatalog, type SourceRecord } from "../src/lib/source-catalog";
 
+loadEnvConfig(process.cwd());
+
 type CliOptions = {
   dryRun: boolean;
+  reindex: boolean;
   sourceId?: string;
   vectorStoreId?: string;
 };
@@ -14,6 +18,7 @@ type CliOptions = {
 function parseArgs(argv: string[]): CliOptions {
   const options: CliOptions = {
     dryRun: false,
+    reindex: false,
   };
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -21,6 +26,11 @@ function parseArgs(argv: string[]): CliOptions {
 
     if (arg === "--dry-run") {
       options.dryRun = true;
+      continue;
+    }
+
+    if (arg === "--reindex") {
+      options.reindex = true;
       continue;
     }
 
@@ -60,6 +70,62 @@ function sourceAttributes(source: SourceRecord) {
     region: source.region,
     doc_type: source.doc_type,
   };
+}
+
+type ExistingVectorStoreFile = {
+  id: string;
+  status: string;
+  last_error: string | null;
+};
+
+function getSourceIdAttribute(
+  attributes?: Record<string, string | number | boolean> | null,
+) {
+  const sourceId = attributes?.source_id;
+  return typeof sourceId === "string" && sourceId.length > 0 ? sourceId : null;
+}
+
+async function listExistingVectorStoreFiles(client: OpenAI, vectorStoreId: string) {
+  const existingFilesBySource = new Map<string, ExistingVectorStoreFile[]>();
+
+  for await (const file of client.vectorStores.files.list(vectorStoreId, {
+    limit: 100,
+    order: "desc",
+  })) {
+    const sourceId = getSourceIdAttribute(file.attributes);
+
+    if (!sourceId) {
+      continue;
+    }
+
+    const existingFiles = existingFilesBySource.get(sourceId) ?? [];
+    existingFiles.push({
+      id: file.id,
+      status: file.status,
+      last_error: file.last_error?.message ?? null,
+    });
+    existingFilesBySource.set(sourceId, existingFiles);
+  }
+
+  return existingFilesBySource;
+}
+
+function hasReusableExistingFile(existingFiles: ExistingVectorStoreFile[]) {
+  return existingFiles.some((file) => {
+    return file.status === "completed" || file.status === "in_progress";
+  });
+}
+
+async function deleteExistingVectorStoreFiles(
+  client: OpenAI,
+  vectorStoreId: string,
+  existingFiles: ExistingVectorStoreFile[],
+) {
+  for (const file of existingFiles) {
+    await client.vectorStores.files.delete(file.id, {
+      vector_store_id: vectorStoreId,
+    });
+  }
 }
 
 async function convertWebpageToTextFile(source: SourceRecord) {
@@ -158,6 +224,37 @@ async function uploadSource(
   }
 }
 
+async function ingestSource(
+  client: OpenAI,
+  vectorStoreId: string,
+  source: SourceRecord,
+  existingFilesBySource: Map<string, ExistingVectorStoreFile[]>,
+  reindex: boolean,
+) {
+  const existingFiles = existingFilesBySource.get(source.id) ?? [];
+
+  if (existingFiles.length > 0 && reindex) {
+    console.log(`Reindexing ${source.id} by replacing existing vector store files...`);
+    await deleteExistingVectorStoreFiles(client, vectorStoreId, existingFiles);
+  } else if (existingFiles.length > 0 && hasReusableExistingFile(existingFiles)) {
+    return {
+      source_id: source.id,
+      status: "skipped_existing",
+      vector_store_file_ids: existingFiles.map((file) => file.id),
+      existing_statuses: existingFiles.map((file) => file.status),
+      last_errors: existingFiles
+        .map((file) => file.last_error)
+        .filter((value): value is string => value !== null),
+    };
+  } else if (existingFiles.length > 0) {
+    console.log(`Cleaning failed or cancelled files for ${source.id} before retrying...`);
+    await deleteExistingVectorStoreFiles(client, vectorStoreId, existingFiles);
+  }
+
+  console.log(`Uploading ${source.id}...`);
+  return uploadSource(client, vectorStoreId, source);
+}
+
 async function main() {
   const options = parseArgs(process.argv.slice(2));
   const catalog = getSourceCatalog();
@@ -209,11 +306,17 @@ async function main() {
   }
 
   const client = getClient();
+  const existingFilesBySource = await listExistingVectorStoreFiles(client, vectorStoreId);
   const results = [];
 
   for (const source of sources) {
-    console.log(`Uploading ${source.id}...`);
-    const result = await uploadSource(client, vectorStoreId, source);
+    const result = await ingestSource(
+      client,
+      vectorStoreId,
+      source,
+      existingFilesBySource,
+      options.reindex,
+    );
     results.push(result);
   }
 
@@ -221,6 +324,7 @@ async function main() {
     JSON.stringify(
       {
         dry_run: false,
+        reindex: options.reindex,
         vector_store_id: vectorStoreId,
         results,
       },

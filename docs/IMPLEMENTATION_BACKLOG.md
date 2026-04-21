@@ -41,10 +41,10 @@ This backlog is intentionally implementation-ready. Each item is meant to be sma
 
 ### APP-002 `done`
 
-- Outcome: add repository scripts, linting, formatting, and env loading
+- Outcome: add repository scripts, validation, and env loading
 - Suggested files: package config, lint config, app env utilities
 - Acceptance criteria:
-  - lint and format commands exist
+  - lint and typecheck commands exist
   - env validation is centralized
 
 ## Phase 2: Source Ingestion

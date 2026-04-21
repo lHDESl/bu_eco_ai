@@ -26,7 +26,7 @@ This repository started as a documentation-first bootstrap and now includes the 
 - One municipality: `천안시`
 - One web application
 - Inputs: typed question and optional image upload
-- Outputs: disposal decision, reason, preparation steps, citations, and follow-up question when uncertain
+- Outputs: disposal decision, reason, preparation steps, citations, follow-up question when uncertain, and an optional image-identified item label
 - Authoritative sources: environment ministry guidance and Cheonan municipal disposal guidance
 
 ## Non-Goals For V1

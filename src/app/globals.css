@@ -13,6 +13,19 @@
   --warning: #a36016;
   --danger: #9b2d30;
   --shadow: 0 22px 60px rgba(32, 47, 35, 0.12);
+  --font-body:
+    "Pretendard",
+    "Noto Sans KR",
+    "Apple SD Gothic Neo",
+    "Malgun Gothic",
+    "Segoe UI",
+    sans-serif;
+  --font-display:
+    "Iowan Old Style",
+    "Palatino Linotype",
+    "Book Antiqua",
+    "Georgia",
+    serif;
 }
 
 * {

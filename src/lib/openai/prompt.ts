@@ -24,6 +24,10 @@ Required response behavior:
 - Include at least one citation whenever you provide a final disposal answer.
 - If the evidence is insufficient or the disposal path depends on unknown material, contamination, or item type, set needs_clarification=true and ask one concise follow-up question.
 - If needs_clarification=true, citations may be empty when no official passage safely supports a final answer.
+- Always include identified_item.
+- If an image is attached and you can infer the likely visible item or material, set identified_item to a short Korean noun phrase such as "플라스틱 배달용기".
+- If there is no image or the image is too ambiguous, set identified_item=null.
+- identified_item is supplemental UI feedback, not a replacement for grounded citations.
 
 Citation rules:
 - Use only source IDs from this list.
@@ -36,5 +40,9 @@ ${sourceList}`;
 }
 
 export function buildUserPrompt(question: string, regionName: string) {
-  return `현재 지역은 ${regionName}입니다.\n질문: ${question}`;
+  return [
+    `활성 지역: ${regionName}`,
+    `사용자 질문: ${question}`,
+    "이미지가 함께 첨부되면 보조 단서로 활용하고, 식별 가능한 경우에만 identified_item에 짧은 한국어 품목명을 넣어 주세요.",
+  ].join("\n");
 }

@@ -11,7 +11,8 @@
     "start": "next start",
     "lint": "eslint src scripts",
     "typecheck": "tsc --noEmit",
-    "ingest": "tsx scripts/ingest-docs.ts"
+    "ingest": "tsx scripts/ingest-docs.ts",
+    "export:review-pack": "tsx scripts/export-code-review-pack.ts"
   },
   "dependencies": {
     "next": "16.2.1",

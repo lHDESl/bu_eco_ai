@@ -8,10 +8,8 @@ export function CitationList({ citations }: CitationListProps) {
   return (
     <div className="rounded-[1.5rem] border border-[var(--border)] bg-white/80 p-5">
       <div className="mb-4 flex items-center justify-between gap-4">
-        <p className="text-sm font-semibold text-[var(--primary)]">공식 출처</p>
-        <span className="text-xs text-[var(--muted)]">
-          {citations.length}건
-        </span>
+        <p className="text-sm font-semibold text-[var(--primary)]">출처</p>
+        <span className="text-xs text-[var(--muted)]">{citations.length}건</span>
       </div>
 
       {citations.length > 0 ? (
@@ -46,7 +44,7 @@ export function CitationList({ citations }: CitationListProps) {
                   rel="noreferrer"
                   className="mt-3 inline-flex text-sm font-medium text-[var(--primary)] underline underline-offset-4"
                 >
-                  원문 보기
+                  공식 페이지 보기
                 </a>
               ) : null}
             </article>
@@ -54,8 +52,8 @@ export function CitationList({ citations }: CitationListProps) {
         </div>
       ) : (
         <p className="text-sm leading-6 text-[var(--muted)]">
-          현재는 표시할 출처가 없습니다. 이 경우에는 보통 추가 확인 질문이
-          필요한 상황이어야 합니다.
+          현재 답변에 연결된 공식 출처가 없습니다. 애매한 품목이라면 재질이나 오염 정도를
+          조금 더 알려 주면 근거를 찾는 데 도움이 됩니다.
         </p>
       )}
     </div>

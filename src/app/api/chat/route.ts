@@ -21,7 +21,7 @@ export async function POST(request: Request) {
       return errorResponse(
         errorBodySchema.parse({
           code: "INVALID_REQUEST",
-          message: "질문을 입력해 주세요.",
+          message: "질문 내용을 입력해 주세요.",
           retryable: false,
         }),
         400,
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
         return errorResponse(
           errorBodySchema.parse({
             code: "UNSUPPORTED_FILE_TYPE",
-            message: "PNG, JPG, WEBP 형식 이미지만 업로드할 수 있습니다.",
+            message: "PNG, JPG, WEBP 형식의 이미지만 업로드할 수 있습니다.",
             retryable: false,
           }),
           400,
@@ -78,8 +78,7 @@ export async function POST(request: Request) {
     return errorResponse(
       errorBodySchema.parse({
         code: "UPSTREAM_OPENAI_ERROR",
-        message:
-          "OpenAI 응답을 처리하지 못했습니다. 환경변수와 vector store 설정을 확인해 주세요.",
+        message: "OpenAI 응답 생성에 실패했습니다. API 키와 vector store 연결 상태를 확인해 주세요.",
         retryable: true,
       }),
       503,

@@ -50,6 +50,8 @@ This directory is the canonical human-readable specification set for the project
 - `IMPLEMENTATION_BACKLOG.md`: ordered build tasks with acceptance criteria
 - `DEMO_SCENARIOS.md`: demo script candidates
 - `REPO_STRUCTURE.md`: current and planned repository structure
+- `CODE_REVIEW_PACK.md`: Notion-friendly full source snapshot for code review and onboarding
+- `NOTION_CODE_ONBOARDING.md`: Notion-ready guide for reading, reviewing, and refactoring the codebase
 - `adr/`: architecture decision records
 
 ## Machine-Readable Counterparts

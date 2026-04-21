@@ -76,6 +76,7 @@ The product exists to lower that friction while keeping the answer tied to verif
    - `citations[]`
    - `needs_clarification`
    - `follow_up_question`
+   - `identified_item` when an image is provided and the visible item can be inferred safely
 4. Every non-error answer must cite at least one official source.
 5. If confidence is insufficient, the system must ask a follow-up question instead of forcing a disposal instruction.
 6. The system must treat `천안시` as the active region by default.

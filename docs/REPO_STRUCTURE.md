@@ -26,7 +26,14 @@ These paths are already in active use.
 | `src/lib/openai/` | OpenAI client, prompt, schema, citation normalization |
 | `src/lib/source-catalog.ts` | source catalog loading and metadata helpers |
 | `scripts/` | ingestion and maintenance scripts |
-| `tests/` | contract tests and evaluation helpers |
+
+## Reserved Paths
+
+These paths are part of the intended structure but are not created yet.
+
+| Path | Purpose |
+| --- | --- |
+| `tests/` | future contract tests and evaluation helpers |
 
 ## Structure Rules
 

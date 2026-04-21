@@ -114,6 +114,7 @@ components:
         - citations
         - needs_clarification
         - follow_up_question
+        - identified_item
         - request_id
       properties:
         decision:
@@ -134,6 +135,11 @@ components:
           type:
             - string
             - 'null'
+        identified_item:
+          type:
+            - string
+            - 'null'
+          description: Short Korean label inferred from the uploaded image when available
         request_id:
           type: string
     Citation:
@@ -156,7 +162,6 @@ components:
           type:
             - string
             - 'null'
-          format: uri
         page_hint:
           type:
             - string

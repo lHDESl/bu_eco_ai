@@ -24,8 +24,10 @@ Project goal:
 Current state:
 
 - Repository bootstrap is documentation-first.
-- App code has not been scaffolded yet.
-- Interface and workflow specs are already defined.
+- MVP application code is implemented with `Next.js`, `Responses API`, and `File Search`.
+- The repository includes working API routes, UI components, and an ingestion script.
+- Vercel Git deployment is active, and deployed environments are restricted to South Korea traffic only.
+- Interface and workflow specs are already defined and should stay aligned with implementation.
 
 Authoritative sources:
 

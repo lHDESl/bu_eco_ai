@@ -2,13 +2,13 @@
 
 ## Purpose
 
-This document describes the planned ingestion workflow for official sources. The workflow itself is not implemented yet, but this is the contract future code should follow.
+This document describes the implemented ingestion workflow for official sources. The current CLI uploads authoritative sources to an OpenAI vector store and emits a machine-readable JSON report to stdout.
 
 ## Design Goals
 
 - ingest only authoritative source material
 - preserve source metadata for filtering and citation
-- keep reruns idempotent where practical
+- keep reruns idempotent by default
 - separate raw source files from generated ingestion state
 
 ## Input Sources
@@ -56,29 +56,37 @@ Planned chunking approach:
 - Leave room for future `filters` on region, authority, or topic.
 - Prefer adding metadata now rather than retrofitting it later.
 
-## Planned CLI Contract
+## Current CLI Contract
 
-Future implementation should support a command similar to this:
+Current command:
 
 ```bash
-npm run ingest -- --catalog data/catalog/source_catalog.yaml
+npm run ingest
 ```
 
-Optional flags can be added later, for example:
+The script loads `.env.local` through Next.js environment loading before reading `OPENAI_API_KEY` and `OPENAI_VECTOR_STORE_ID`.
+
+Supported flags:
 
 - `--source-id <id>`
 - `--dry-run`
 - `--reindex`
 - `--vector-store-id <id>`
 
-## Expected Outputs
+## Current Outputs
 
-The ingestion run should eventually produce:
+The ingestion run currently produces:
 
 - uploaded file references in OpenAI
 - vector store association
-- a machine-readable ingestion report
-- enough metadata to reconstruct citations later
+- a machine-readable JSON report printed to stdout
+- source metadata on each uploaded vector store file
+
+Default rerun behavior:
+
+- if a source already exists in the vector store with status `completed` or `in_progress`, the script skips re-upload for that `source_id`
+- if prior files for a source are only `failed` or `cancelled`, the script removes them and retries
+- if `--reindex` is passed, the script deletes existing vector store attachments and replaces them with a fresh upload
 
 ## Reindex Triggers
 
@@ -101,5 +109,5 @@ Reindex when:
 2. extract text from official sources
 3. normalize chunk metadata
 4. upload files or chunks to OpenAI
-5. save ingestion report
+5. emit ingestion report
 6. verify retrieval manually with a small test question set

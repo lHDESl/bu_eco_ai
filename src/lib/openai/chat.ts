@@ -1,9 +1,16 @@
 import { randomUUID } from "node:crypto";
 import { zodTextFormat } from "openai/helpers/zod";
-import type { ResponseInput } from "openai/resources/responses/responses";
+import type {
+  ResponseFileSearchToolCall,
+  ResponseInput,
+} from "openai/resources/responses/responses";
 import { errorBodySchema, type ChatResponse } from "../contracts";
 import { getServerConfig } from "../config";
-import { getAuthoritativeSources } from "../source-catalog";
+import {
+  getAuthoritativeSourceMap,
+  getAuthoritativeSources,
+  type SourceRecord,
+} from "../source-catalog";
 import { getOpenAIClient } from "./client";
 import { buildSystemPrompt, buildUserPrompt } from "./prompt";
 import { modelChatResponseSchema } from "./response-schema";
@@ -13,15 +20,112 @@ type ChatInput = {
   imageDataUrl?: string;
 };
 
-function normalizeCitations(citations: ChatResponse["citations"]) {
-  return citations.filter((citation) => {
-    return (
-      citation.source_id &&
-      citation.title &&
-      citation.authority &&
-      (citation.url === null || citation.url.startsWith("http"))
-    );
-  });
+type RetrievedSourceMatch = {
+  excerpt: string | null;
+  file_id: string | null;
+  filename: string | null;
+  score: number | null;
+};
+
+function normalizeOptionalString(value: string | null | undefined) {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : null;
+}
+
+function collectRetrievedSourceMatches(
+  output: ReadonlyArray<{
+    type: string;
+    results?: Array<ResponseFileSearchToolCall.Result> | null;
+  }>,
+  authoritativeSourceMap: Map<string, SourceRecord>,
+) {
+  const matches = new Map<string, RetrievedSourceMatch[]>();
+
+  for (const item of output) {
+    if (item.type !== "file_search_call" || !item.results) {
+      continue;
+    }
+
+    for (const result of item.results) {
+      const sourceId = result.attributes?.source_id;
+
+      if (typeof sourceId !== "string" || !authoritativeSourceMap.has(sourceId)) {
+        continue;
+      }
+
+      const currentMatches = matches.get(sourceId) ?? [];
+      currentMatches.push({
+        excerpt: normalizeOptionalString(result.text),
+        file_id: result.file_id ?? null,
+        filename: result.filename ?? null,
+        score: typeof result.score === "number" ? result.score : null,
+      });
+      matches.set(sourceId, currentMatches);
+    }
+  }
+
+  return matches;
+}
+
+function normalizeCitations(
+  citations: ChatResponse["citations"],
+  retrievedSourceMatches: Map<string, RetrievedSourceMatch[]>,
+  authoritativeSourceMap: Map<string, SourceRecord>,
+) {
+  const normalizedCitations: ChatResponse["citations"] = [];
+  const seen = new Set<string>();
+
+  for (const citation of citations) {
+    const source = authoritativeSourceMap.get(citation.source_id);
+    const retrievedMatches = retrievedSourceMatches.get(citation.source_id);
+
+    if (!source || !retrievedMatches || retrievedMatches.length === 0) {
+      continue;
+    }
+
+    const pageHint = normalizeOptionalString(citation.page_hint);
+    const excerpt =
+      normalizeOptionalString(citation.excerpt) ?? retrievedMatches[0]?.excerpt ?? null;
+    const dedupeKey = `${citation.source_id}:${pageHint ?? ""}`;
+
+    if (seen.has(dedupeKey)) {
+      continue;
+    }
+
+    normalizedCitations.push({
+      source_id: source.id,
+      title: source.title,
+      authority: source.authority,
+      url: source.remote_url,
+      page_hint: pageHint,
+      excerpt,
+    });
+    seen.add(dedupeKey);
+  }
+
+  if (normalizedCitations.length > 0) {
+    return normalizedCitations;
+  }
+
+  for (const [sourceId, retrievedMatches] of retrievedSourceMatches) {
+    const source = authoritativeSourceMap.get(sourceId);
+
+    if (!source || seen.has(sourceId)) {
+      continue;
+    }
+
+    normalizedCitations.push({
+      source_id: source.id,
+      title: source.title,
+      authority: source.authority,
+      url: source.remote_url,
+      page_hint: null,
+      excerpt: retrievedMatches[0]?.excerpt ?? null,
+    });
+    seen.add(sourceId);
+  }
+
+  return normalizedCitations;
 }
 
 export async function generateChatResponse({
@@ -33,7 +137,7 @@ export async function generateChatResponse({
   if (!config.OPENAI_API_KEY) {
     throw errorBodySchema.parse({
       code: "OPENAI_API_KEY_MISSING",
-      message: "OPENAI API 키가 설정되지 않았습니다.",
+      message: "OPENAI_API_KEY is not configured.",
       retryable: false,
     });
   }
@@ -41,13 +145,14 @@ export async function generateChatResponse({
   if (!config.OPENAI_VECTOR_STORE_ID) {
     throw errorBodySchema.parse({
       code: "VECTOR_STORE_NOT_CONFIGURED",
-      message: "OpenAI vector store ID가 설정되지 않았습니다.",
+      message: "OPENAI_VECTOR_STORE_ID is not configured.",
       retryable: false,
     });
   }
 
   const client = getOpenAIClient();
   const sources = getAuthoritativeSources();
+  const authoritativeSourceMap = getAuthoritativeSourceMap();
   const input: ResponseInput = [
     {
       type: "message",
@@ -69,13 +174,13 @@ export async function generateChatResponse({
         },
         ...(imageDataUrl
           ? [
-            {
-              type: "input_image" as const,
-              image_url: imageDataUrl,
-              detail: "auto" as const,
-            },
-          ]
-        : []),
+              {
+                type: "input_image" as const,
+                image_url: imageDataUrl,
+                detail: "auto" as const,
+              },
+            ]
+          : []),
       ],
     },
   ];
@@ -97,10 +202,18 @@ export async function generateChatResponse({
   });
 
   const parsed = modelChatResponseSchema.parse(response.output_parsed);
+  const retrievedSourceMatches = collectRetrievedSourceMatches(
+    response.output,
+    authoritativeSourceMap,
+  );
 
   return {
     ...parsed,
-    citations: normalizeCitations(parsed.citations),
+    citations: normalizeCitations(
+      parsed.citations,
+      retrievedSourceMatches,
+      authoritativeSourceMap,
+    ),
     request_id: response.id ?? randomUUID(),
   };
 }

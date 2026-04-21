@@ -58,6 +58,7 @@ The model-facing structured output should match this conceptual schema:
 - `citations: Citation[]`
 - `needs_clarification: boolean`
 - `follow_up_question: string | null`
+- `identified_item: string | null`
 
 ## Citation Rules
 
@@ -74,7 +75,7 @@ Use only official source material provided through retrieval and configured sour
 Prefer Cheonan-specific rules over general national rules when they conflict.
 If the available evidence is insufficient, do not guess. Ask one concise follow-up question.
 Always answer in Korean and return the agreed structured object.
-Your object must contain: decision, reason, prep_steps, citations, needs_clarification, follow_up_question.
+Your object must contain: decision, reason, prep_steps, citations, needs_clarification, follow_up_question, identified_item.
 Citations must reference official sources only.
 ```
 

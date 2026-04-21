@@ -114,6 +114,7 @@ The app must converge on the following response shape:
 - `citations: Citation[]`
 - `needs_clarification: boolean`
 - `follow_up_question: string | null`
+- `identified_item: string | null`
 
 The canonical machine-readable contract lives in `specs/openapi.yaml`.
 
