@@ -43,10 +43,12 @@ export function HomeHero({ appName, regionLabel }: HomeHeroProps) {
           </div>
 
           <div className="max-w-3xl space-y-4">
-            <h1 className="section-title text-4xl leading-tight sm:text-5xl lg:text-6xl">
-              천안시 공식 규정을 먼저 확인하는
+            <h1 className="section-title break-keep text-4xl leading-tight sm:text-5xl">
+              <span className="inline-block sm:whitespace-nowrap">
+                천안시 공식규정을 먼저 확인하는
+              </span>
               <br />
-              분리배출 도우미
+              <span className="inline-block">분리배출 도우미</span>
             </h1>
             <p className="max-w-2xl text-base leading-7 text-[var(--muted)] sm:text-lg">
               시민이 텍스트나 사진으로 질문하면 천안시 공식 배출 기준과 환경부 안내 자료를
